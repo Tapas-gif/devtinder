@@ -2,17 +2,13 @@ const express=require("express");
 
 const app = express();
 
-app.get("/hello/2", (req,res)=>{
-    res.send("hello 2");
-});
-app.post("/hello", (req,res)=>{
-    res.send("hello");
-})
+app.get("/getUserdata",(req,res) =>{
+    //write you DB logic here
 
-app.use("/" , (req,res)=>{
-    res.send("hello world");
-});
 
-app.listen(3000,()=>{
-    console.log("server is succesfully listen on port 3000");
+    throw new error("DB connection failed");
+    res.send("user data");
+});
+app.use("/",(err,req,res,next) =>{
+    res.status(500).send("something went wrong" +err.message);
 });
