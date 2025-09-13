@@ -23,6 +23,35 @@ app.post("/signup", async (req,res)=>{
     }
    
 });
+//get user by emailid
+app.get("/user", async (req,res)=>{
+  const useremail = req.body.Emailid;
+  try{
+    const users = await User.find({Emailid: useremail});
+    if(users.length === 0){
+      res.status(404).send("user not found");
+    }else {
+      res.send(users);{
+
+      }
+    }
+  }
+  catch(err){
+    res.status(404).send("error fetching user");
+  }
+});
+
+//Feed-Api = GET/feed get the all the users from f the database
+
+app.get("/feed", async (req,res)=>{
+  try{
+    const users = await User.find({});
+    res.send(users);
+  }
+  catch (err){
+    res.status(404).send("error fetching users");
+  }
+})
 
 connectDB()
 
