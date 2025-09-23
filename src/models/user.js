@@ -2,19 +2,48 @@ const mongoose = require("mongoose");
 
 const userSchema = mongoose.Schema({
     FirstName:{
-        type:String
+        type:String,
+        required:true,
+        minLength:4,
+        maxLength:20,
     },
     LastName:{
-        type:String
+        type:String,
+        minLength:4,
+        maxLength:20
     },
     Emailid:{
-        type:String
+        type:String,
+        lowercase:true,
+        required:true,
+        unique:true,
+        trim:true,
     },
     password:{
-        type:String
+        type:String,
+        required:true,
     },
     age:{
-        type:Number
+        type:Number,
+        min:18,
     },
-});
+    photourl:{
+        type:String,
+        default:"https://thumbs.dreamstime.com/b/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137160339.jpg"
+    },
+
+    gender:{
+        type:String,
+        validate(value){
+            if(!["male","female","other"].includes(value))
+            {
+                throw new Error("Gender Data is not valid");
+            }
+        }
+    },
+},
+{
+    timestamps:true,
+}
+);
 module.exports = mongoose.model("User",userSchema);
