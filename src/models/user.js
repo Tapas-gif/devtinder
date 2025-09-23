@@ -31,6 +31,10 @@ const userSchema = mongoose.Schema({
         type:String,
         default:"https://thumbs.dreamstime.com/b/vector-illustration-avatar-dummy-logo-collection-image-icon-stock-isolated-object-set-symbol-web-137160339.jpg"
     },
+    skills : {
+        type: [String],
+        require : true,
+    },
 
     gender:{
         type:String,

@@ -64,10 +64,20 @@ app.delete("/user", async (req,res) =>{
    }
 });
 //update user by id
-app.patch("/user", async (req,res) =>{
-  const userId = req.body.userId;
-  const Data = req.body;
+app.patch("/user/:userid", async (req,res) =>{
+  const userId = req.params?.userId;
+  const data = req.body;
   try{
+    const ALLOWED_UPDATES = ["skill","gender","photourl","age"];
+    const isAllowedUpdate = Object.keys(data || {}).every((k)=> ALLOWED_UPDATES.includes(k)
+  );
+  if(!isAllowedUpdate){
+    throw new Error("Invalids Updates");
+  }
+  if(data?.skills.length>10)
+  {
+    throw new Error("Skills should not be greater than 10");
+  }
     const user = await User.findByIdAndUpdate(userId,Data,{
       runValidators:true,
     });
