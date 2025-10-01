@@ -13,7 +13,7 @@ const userSchema = mongoose.Schema({
         minLength:4,
         maxLength:20
     },
-    Emailid:{
+    emailid:{
         type:String,
         lowercase:true,
         required:true,

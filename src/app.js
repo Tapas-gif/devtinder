@@ -2,12 +2,14 @@ const express=require("express");
 const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
+const {validateSignupData} = require("./utills/validation");
+const bcrypt = require("bcrypt");
 app.use(express.json());
 
 
 app.post("/signup", async (req,res)=>{
 
-  const user = new User(req.body);
+  
     //const user = new User({
      //   FirstName: "Tapas",
        // LastName: "Parida",
@@ -16,6 +18,16 @@ app.post("/signup", async (req,res)=>{
     //});
 
     try{
+      validateSignupData(req);
+      const{FirstName,LastName,emailid,password} = req.body;
+      const passwordHash = await bcrypt.hash(password,10);
+      const user = new User({
+        FirstName,
+        LastName,
+        emailid,
+        password:passwordHash,
+      });
+      
          await user.save();
     res.send("Data added to successfully");
     }catch(err) {
@@ -24,6 +36,25 @@ app.post("/signup", async (req,res)=>{
    
 });
 //get user by emailid
+app.post("/login", async (req,res) => {
+  try{
+    const{emailid,password} = req.body;
+    const user = await User.findOne({emailid:emailid});
+    if(!user){
+      throw new Error("User not found");
+    }
+    const isPasswordValid = await bcrypt.compare(password,user.password);
+    if(!isPasswordValid){
+      throw new Error("invalid password");
+    }
+    else{
+      res.send("Login successful");
+    }
+  }
+  catch(err){
+    res.status(404).send("error fetching user");
+  }
+});
 app.get("/user", async (req,res)=>{
   const useremail = req.body.Emailid;
   try{
