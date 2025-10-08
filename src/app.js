@@ -4,7 +4,11 @@ const app = express();
 const User = require("./models/user");
 const {validateSignupData} = require("./utills/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
+
 app.use(express.json());
+app.use(cookieParser());
 
 
 app.post("/signup", async (req,res)=>{
@@ -44,15 +48,38 @@ app.post("/login", async (req,res) => {
       throw new Error("User not found");
     }
     const isPasswordValid = await bcrypt.compare(password,user.password);
-    if(!isPasswordValid){
-      throw new Error("invalid password");
-    }
-    else{
+    if(isPasswordValid){
+      //create a jwt token
+      const token = await jwt.sign({_id: user._id},"RAT@MOUSE$89");
+
+      res.cookie("token", token);
+    
+
       res.send("Login successful");
     }
   }
   catch(err){
     res.status(404).send("error fetching user");
+  }
+});
+app.get("/profile",async (req,res)=>{
+try{
+  const cookies = req.cookies;
+  const{token} = cookies;
+  if(!token){
+    throw new Error("No token found");
+  }
+  const decoded = await jwt.verify(token,"RAT@MOUSE$89");
+  const {_id} = decoded;
+  const user = await User.findById(_id);
+  console.log("loged in user:", + _id)
+  if(!user){
+    throw new Error("User not found");
+  }
+  res.send(user);
+}
+catch(err){
+    res.status(404).send("error fetching user", + err.message);
   }
 });
 app.get("/user", async (req,res)=>{
