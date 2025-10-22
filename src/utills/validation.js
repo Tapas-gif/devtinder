@@ -1,15 +1,34 @@
 const validator = require("validator");
+
+// validateSignupData now normalizes common email field names and returns
+// the normalized values so callers can use a single `email` variable.
 const validateSignupData = (req) => {
-    const{FirstName , LastName ,emailid , password} = req.body;
-    if(!FirstName || !LastName){
+    const { FirstName, LastName,emailid, password } = req.body;
+    // accept multiple possible email key names and normalize to `email`
+   
+
+    if (!FirstName || !LastName) {
         throw new Error("Name must not be empty");
     }
-    else if(!validator.isEmail(emailid))
-    {
+
+    if (!emailid) {
+        throw new Error("Email is required");
+    }
+
+    if (!validator.isEmail(emailid)) {
         throw new Error("Email is not valid");
     }
-    else if(!validator.isStrongPassword(password)){
+
+    if (!password) {
+        throw new Error("Password is required");
+    }
+
+    if (!validator.isStrongPassword(password)) {
         throw new Error("Password is not strong");
     }
+
+    // return normalized values for convenience
+    return { FirstName, LastName, emailid, password };
 }
-module.exports = {validateSignupData};
+
+module.exports = { validateSignupData };
