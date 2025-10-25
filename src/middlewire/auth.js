@@ -11,6 +11,7 @@ const userAuth = async (req,res,next) =>{
         const{_id} = decoded;
         const user = await User.findById(_id);
         req.user = user;
+        console.log("Authenticated user:", user);
         if(!user){
             throw new Error("user not found");
         }

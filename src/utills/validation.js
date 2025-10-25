@@ -29,6 +29,16 @@ const validateSignupData = (req) => {
 
     // return normalized values for convenience
     return { FirstName, LastName, emailid, password };
+};
+const validateLoginData = (req)=>{
+    const validateEditFields = ["FirstName","LastName","skills","age","gender","photourl"];
+    const Data = req.body;
+    const isAllowedEdit = Object.keys(Data ||{}).every((k)=> validateEditFields.includes(k));
+
+    if(!isAllowedEdit){
+        throw new Error("Invalid Edit Fields");
+    }
+    return true;
 }
 
-module.exports = { validateSignupData };
+module.exports = { validateSignupData,validateLoginData };
